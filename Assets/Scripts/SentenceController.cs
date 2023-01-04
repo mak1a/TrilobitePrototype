@@ -12,11 +12,20 @@ namespace Adventure
         [SerializeField, Header("文章を設定")]
         private List<Sentence> m_sentences = new List<Sentence>();
 
+        [SerializeField, Header("NameTextを挿入")]
+        private Text m_nameText;
+
         [SerializeField, Header("Textを挿入")]
         private Text m_text;
 
         [SerializeField, Header("ボタンを挿入")]
         private Button m_buttonNextText;
+
+        [SerializeField, Header("人物の画像を全て挿入")]
+        private HumanDataList m_humanData;
+
+        [SerializeField, Header("場所を設定")]
+        private List<Image> m_images = new List<Image>();
 
         // m_sentenceのindex
         private int m_sentenceIndex = 0;
@@ -47,10 +56,28 @@ namespace Adventure
                 return;
             }
 
+            m_images.ForEach(image => image.gameObject.SetActive(false));
+
             // ボタンを非表示にする
             m_buttonNextText.gameObject.SetActive(false);
 
             var sentence = m_sentences[m_sentenceIndex];
+
+            for (int index = 0; index < sentence.People.Count; index++)
+            {
+                // 画像を表示する
+                var image = m_images[sentence.PositionIndexes[index]];
+                var sprite = m_humanData.Find(sentence.People[index]);
+
+                if (sprite)
+                {
+                    image.gameObject.SetActive(true);
+                    image.sprite = sprite;
+                }
+            }
+
+            // 名前を表示する
+            m_nameText.text = sentence.Name;
 
             // 文章を表示する
             m_text.text = "";
